@@ -1,0 +1,22 @@
+version: '1' 
+
+services: 
+    productpage: 
+        build: ./productpage
+        ports: 
+            - "8080:9080"
+
+    details: 
+        build: ./details
+        ports: 
+            - "8081:9080"
+
+    ratings: 
+        build: ./ratings 
+        ports: 
+            - "8082:9080"
+
+    reviews: 
+        build: ./reviews/reviews-wlpcfg
+        ports: 
+            - "8083:9080"
