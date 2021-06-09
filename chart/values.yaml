@@ -1,0 +1,33 @@
+
+
+productpage:
+  replicas: 1
+  service:
+    type: NodePort
+    port: 9080
+  image: docker.io/istio/examples-bookinfo-productpage-v1:1.16.2
+
+
+details:
+  replicas: 1
+  service:
+    type: ClusterIP
+    port: 9080
+  image: docker.io/istio/examples-bookinfo-details-v1:1.16.2
+
+ratings:
+  replicas: 1
+  service:
+    type: ClusterIP
+    port: 9080
+  image: docker.io/istio/examples-bookinfo-ratings-v1:1.16.2
+
+reviews:
+  replicas: 1
+  service:
+    type: ClusterIP
+    port: 9080
+  image:
+    v1: docker.io/istio/examples-bookinfo-reviews-v1:1.16.2
+    v2: docker.io/istio/examples-bookinfo-reviews-v2:1.16.2
+    v3: docker.io/istio/examples-bookinfo-reviews-v3:1.16.2

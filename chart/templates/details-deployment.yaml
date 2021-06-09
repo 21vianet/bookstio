@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: details-v1
+  labels:
+    app: details
+    version: v1
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.details.replicas }}
+  selector:
+    matchLabels:
+      app: details
+      version: v1
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: details
+        version: v1
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: details
+          image: {{ .Values.details.image}}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          securityContext:
+            runAsUser: 1000

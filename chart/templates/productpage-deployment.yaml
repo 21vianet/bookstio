@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  metadata:
+  name: productpage-v1
+  labels:
+    app: productpage
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.productpage.replicas }}
+  selector:
+    matchLabels:
+      app: productpage
+      release: {{ .Release.Name }}
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: productpage
+        release: {{ .Release.Name }}
+        version: v1
+    spec:
+      containers:
+      - name: productpage
+        image: {{ .Values.productpage.image}}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 9080
+          protocol: TCP
+        livenessProbe:
+            httpGet:
+              path: /health
+              port: 9080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 9080
+          initialDelaySeconds: 5
+          periodSeconds: 5
