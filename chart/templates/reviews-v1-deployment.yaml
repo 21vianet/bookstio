@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  metadata:
+  name: reviews-v1
+  labels:
+    app: reviews
+    release: {{ .Release.Name }}
+    version: v1
+spec:
+  replicas: {{ .Values.reviews.replicas }}
+  selector:
+    matchLabels:
+      app: reviews
+      release: {{ .Release.Name }}
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: reviews
+        release: {{ .Release.Name }}
+        version: v1
+    spec:
+      containers:
+      - name: reviews
+        image: {{ .Values.reviews.image.v2}}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 9080
+          protocol: TCP
+        livenessProbe:
+            httpGet:
+              path: /health
+              port: 9080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 9080
+          initialDelaySeconds: 5
+          periodSeconds: 5

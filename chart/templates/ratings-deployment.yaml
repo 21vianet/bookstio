@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  metadata:
+  name: ratings-v1
+  labels:
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.ratings.replicas }}
+  selector:
+    matchLabels:
+      app: ratings
+      release: {{ .Release.Name }}
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: ratings
+        release: {{ .Release.Name }}
+        version: v1
+    spec:
+      containers:
+      - name: ratings
+        image: {{ .Values.ratings.image}}
+        imagePullPolicy: IfNotPresent
+        ports:
+          - name: http
+            containerPort: 9080
+        livenessProbe:
+            httpGet:
+              path: /health
+              port: 9080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 9080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        securityContext:
+          runAsUser: 1000
