@@ -31,3 +31,7 @@ reviews:
     v1: docker.io/istio/examples-bookinfo-reviews-v1:1.16.2
     v2: docker.io/istio/examples-bookinfo-reviews-v2:1.16.2
     v3: docker.io/istio/examples-bookinfo-reviews-v3:1.16.2
+  weight:
+    v1: 15
+    v2: 70
+    v3: 15

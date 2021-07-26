@@ -40,3 +40,23 @@ login:
 	@docker login -u $(USER_ID)
 
 push: login commit
+
+Install_kubectl: 
+	curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+	install -o root -g root -m 0755 kubectl /bin/kubectl
+
+Install_kind: 
+	curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
+	chmod +x ./kind
+	./kind create cluster --name=bookstio
+
+Install_helm: 
+	curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+Install_istio: 
+	curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.6.8 TARGET_ARCH=x86_64 sh -
+	./istio-1.6.8/bin/istioctl install --set profile=demo -y
+	kubectl label namespace default istio-injection=enabled
+
+
+
