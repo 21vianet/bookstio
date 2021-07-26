@@ -25,13 +25,34 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@master
       
-      # Runs a single command using the runners shell
+      # push images to dockerhub
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_NAME }}
           password: ${{ secrets.DOCKER_HUB_PASS }}
 
-      # Runs a set of commands using the runners shell
       - name: PUSH IMAGES
         run: make USER_ID=${{ secrets.DOCKER_HUB_NAME }} commit
+
+      # run services in kind with helm chart
+      - name: Create cluster
+        run: make Install_kind
+        
+      - name: install istio
+        run: make Install_istio
+
+      - name : run services  
+        run: helm install --set reviews.weight.v1=15 --set reviews.weight.v2=15 --set reviews.weight.v3=70 bookstio ./chart
+        
+      - name : prepare to test
+        run : chmod +x ./test.sh
+        
+      - name : wait to build
+        run: ./test.sh
+        
+      - name : get pod
+        run : kubectl get pod
+
+      - name: show result
+        run: ./test.sh

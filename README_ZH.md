@@ -1,12 +1,14 @@
-# Boostio
+# Bookstio
 
-Bookstio是一个Docker入门项目，帮助初学者学习认识基本的dockers使用，同时对自动化部署有一定的了解
+Bookstio是一个Docker及Istio的入门项目，帮助初学者学习认识基本的dockers使用，了解kubenetes的结构与Istio的部分功能，同时使得用户对自动化部署有一定的了解
 
-Bookstio基于istio/sample/bookinfo所提供的productpage, reviews, ratings, details微服务。不同于原项目从dockerhub拉取已有的微服务镜像，使用Kubernetes+istio构建服务网格。Bookstio从本地源代码部署项目，使用docker build在本地逐个构建镜像，使用docker-compose实现无istio的简化版的运行，对刚接触Docker的初学者更加友好。
+Bookstio基于istio/sample/bookinfo所提供的productpage, reviews, ratings, details微服务。Bookstio可以从本地源代码部署项目，使用docker build在本地逐个构建镜像，使用docker-compose实现无istio的简化版的运行，对刚接触Docker的初学者更加友好。
 
 Bookstio提供了Makefile自动化部署方案，可帮助初学者确认环境准备并快速查看效果。
 
-Bookstio还提供了GitHub Action的线上自动化部署，在Github上设置好DockerHub相关的secrets后，进行push无需环境即可线上构建镜像，并将镜像推到指定DockerHub
+Bookstio还提供了GitHub Action的线上自动化部署，在Github上设置好DockerHub相关的secrets后，进行push，无需环境即可通过Github Action线上构建镜像，并将镜像推到指定DockerHub
+
+为进一步地了解kuberenetes与Istio，bookstio提供了基于helm chart的安装、运行方法，可在最简单的kubenetes环境下（如kind）直观地看到istio的功能
 
 ## 环境准备
 
@@ -78,3 +80,15 @@ docker build -t reviews-v3 \
 
 2. fork项目后在Github的settings下找到secrets，在Repository secrets新建DOCKER_HUB_NAME和DOCKER_HUB_PASS分别填入dockerhub的用户名和token
 3. push项目后action自动运行，运行完成后，在dockerhub即可看见所创建的镜像
+
+
+
+## Helm Chart部署
+
+1. 进行helm chart部署首先需要一个完整的kubenetes环境，并安装kubectl以及istio, Makefile中提供了上述环境的安装脚本，通过执行Install_kubectl、Install_kind、Install_helm、Install_istio命令即可构建可部署的环境。
+2. 进行helm chart安装，执行下述命令即可，reviews.weight.v1，reviews.weight.v2，reviews.weight.v3为istio对三个review服务进行流量分配的比例参数
+```bash
+helm install --set reviews.weight.v1=15 --set reviews.weight.v2=15 --set reviews.weight.v3=70 bookstio ./chart
+```
+3. 通过运行test.sh可以模拟调用服务1000次，观察获取到的结果分布情况
+4. 上述流程均写入main.yml, 用户可在Github Action中观察到安装、运行情况
